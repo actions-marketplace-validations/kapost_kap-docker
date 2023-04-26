@@ -1,0 +1,39 @@
+on: push
+name: Build Docker Image
+
+env:
+  PUSH_REPO: my-repo
+  IMAGE_TAG: latest
+
+jobs:
+  build:
+    name: Build Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.4.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+    
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      
+      - name: Docker Build
+        uses: kapost/kap-docker
+        env:
+          PULL: false
+          BUILD: true
+          PUSH: true
+          REPO: ${{ env.PUSH_REPO }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}

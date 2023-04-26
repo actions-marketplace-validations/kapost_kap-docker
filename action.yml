@@ -1,0 +1,8 @@
+name: kap-docker
+description: "This action creates a docker container with AWS CLI and Docker installed"
+branding:
+  icon: 'layers'
+  color: 'orange'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
